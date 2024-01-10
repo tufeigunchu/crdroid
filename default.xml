@@ -7,20 +7,24 @@
            sync-j="4"
            revision="refs/heads/lineage-20.0" />
 
+  <remote  name="lineage"
+           fetch="https://mirrors.tuna.tsinghua.edu.cn/git/lineageOS/"
+           review="review.lineageos.org" />
+  
   <remote  name="private"
            fetch="ssh://git@github.com" />
 
   <remote  name="aosp"
-           fetch="https://android.googlesource.com"
+           fetch="https://mirrors.tuna.tsinghua.edu.cn/git/AOSP"
            review="android-review.googlesource.com"
-           revision="refs/tags/android-13.0.0_r75" />
+           revision="refs/tags/android-13.0.0_r83" />
 
   <default revision="refs/heads/lineage-20.0"
            remote="github"
            sync-c="true"
            sync-j="4" />
 
-  <superproject name="platform/superproject" remote="aosp" revision="android-13.0.0_r75" />
+  <superproject name="platform/superproject" remote="aosp" revision="android-13.0.0_r83" />
   <contactinfo bugurl="go/repo-bug" />
 
   <!-- AOSP Projects -->
@@ -647,7 +651,7 @@
   <project path="external/s2-geometry-library-java" name="platform/external/s2-geometry-library-java" groups="pdk" remote="aosp" />
   <project path="external/scapy" name="platform/external/scapy" groups="pdk-fs" remote="aosp" />
   <project path="external/scrypt" name="platform/external/scrypt" groups="pdk" remote="aosp" />
-  <project path="external/scudo" name="platform/external/scudo" groups="pdk" remote="aosp" />
+  <!--project path="external/scudo" name="platform/external/scudo" groups="pdk" remote="aosp" />-->
   <project path="external/seccomp-tests" name="platform/external/seccomp-tests" groups="pdk" remote="aosp" />
   <!--<project path="external/selinux" name="platform/external/selinux" groups="pdk" remote="aosp" />-->
   <!--<project path="external/setupcompat" name="LineageOS/android_external_setupcompat" groups="pdk" />-->
@@ -715,7 +719,7 @@
   <project path="external/xz-embedded" name="platform/external/xz-embedded" groups="pdk" remote="aosp" />
   <project path="external/xz-java" name="platform/external/xz-java" groups="pdk" remote="aosp" />
   <project path="external/yapf" name="platform/external/yapf" groups="vts,projectarch,pdk" remote="aosp" />
-  <project path="external/zlib" name="platform/external/zlib" groups="pdk" remote="aosp" />
+  <project path="external/zlib" name="tufeigunchu/android_external_zlib-ng" groups="pdk" remote="github" revision="sc-qpr3" />
   <project path="external/zopfli" name="platform/external/zopfli" groups="pdk" remote="aosp" />
   <project path="external/zstd" name="LineageOS/android_external_zstd" />
   <project path="external/zucchini" name="platform/external/zucchini" groups="pdk" remote="aosp" />
@@ -819,7 +823,7 @@
   <project path="hardware/synaptics/wlan" name="platform/hardware/synaptics/wlan" groups="pdk" remote="aosp" />
   <project path="hardware/ti/am57x" name="platform/hardware/ti/am57x" groups="pdk" remote="aosp" />
   <project path="kernel/configs" name="LineageOS/android_kernel_configs" groups="vts,pdk" />
-  <project path="kernel/prebuilts/4.19/arm64" name="kernel/prebuilts/4.19/arm64" groups="pdk" clone-depth="1" remote="aosp" />
+  <!--project path="kernel/prebuilts/4.19/arm64" name="kernel/prebuilts/4.19/arm64" groups="pdk" clone-depth="1" remote="aosp" />
   <project path="kernel/prebuilts/5.4/arm64" name="kernel/prebuilts/5.4/arm64" groups="pdk" clone-depth="1" remote="aosp" />
   <project path="kernel/prebuilts/5.4/x86_64" name="kernel/prebuilts/5.4/x86-64" groups="pdk" clone-depth="1" remote="aosp" />
   <project path="kernel/prebuilts/5.10/arm64" name="kernel/prebuilts/5.10/arm64" groups="pdk" clone-depth="1" remote="aosp" />
@@ -838,7 +842,7 @@
   <project path="kernel/prebuilts/common-modules/virtual-device/5.4/x86-64" name="kernel/prebuilts/common-modules/virtual-device/5.4/x86-64" groups="pdk" clone-depth="1" remote="aosp" />
   <project path="kernel/prebuilts/common-modules/virtual-device/mainline/arm64" name="kernel/prebuilts/common-modules/virtual-device/mainline/arm64" groups="pdk" clone-depth="1" remote="aosp" />
   <project path="kernel/prebuilts/common-modules/virtual-device/mainline/x86-64" name="kernel/prebuilts/common-modules/virtual-device/mainline/x86-64" groups="pdk" clone-depth="1" remote="aosp" />
-  <project path="kernel/tests" name="kernel/tests" groups="vts,pdk" remote="aosp" />
+  <project path="kernel/tests" name="kernel/tests" groups="vts,pdk" remote="aosp" />-->
   <!--<project path="libcore" name="LineageOS/android_libcore" groups="pdk" />-->
   <project path="libnativehelper" name="platform/libnativehelper" groups="pdk" remote="aosp" />
   <project path="packages/apps/BasicSmsReceiver" name="platform/packages/apps/BasicSmsReceiver" groups="pdk-cw-fs,pdk-fs" remote="aosp" />
