@@ -18,7 +18,7 @@
 
   <project path="art" name="crdroidandroid/android_art" groups="pdk" remote="crdroid" />
 
-  <project path="bionic" name="crdroidandroid/android_bionic" groups="pdk" remote="crdroid" />
+  <project path="bionic" name="tufeigunchu/crdroid_bionic" groups="pdk" remote="crdroid" />
 
   <project path="bootable/recovery" name="crdroidandroid/android_bootable_recovery" groups="pdk" remote="crdroid" />
 
@@ -107,7 +107,7 @@
   <!-- Clang 16 version 17.0.2 -->
   <project path="prebuilts/clang/host/linux-x86/clang-latest" name="crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r487747c" remote="crdroid-gitlab" />
 
-  <project path="system/core" name="crdroidandroid/android_system_core" groups="pdk" remote="crdroid" />
+  <project path="system/core" name="tufeigunchu/crdroid_system_core" groups="pdk" remote="crdroid" />
   <project path="system/memory/lmkd" name="crdroidandroid/android_system_memory_lmkd" groups="pdk" remote="crdroid" />
   <project path="system/netd" name="crdroidandroid/android_system_netd" groups="pdk" remote="crdroid" />
   <project path="system/sepolicy" name="crdroidandroid/android_system_sepolicy" groups="pdk" remote="crdroid" />
