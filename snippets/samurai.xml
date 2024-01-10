@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<manifest>
+
+    <remote name="vendor"
+            fetch="https://github.com"
+            revision="lineage-20" />
+	
+    <remote name="device"
+            fetch="https://github.com"
+            revision="lineage-20"/>
+
+    <remote name="kernel"
+            fetch="https://github.com"
+            revision="lineage-20"/>
+
+    <remote name="realme"
+            fetch="https://github.com"
+            revision="lineage-20"/>
+
+    <!--Device Trees-->
+    <project path="device/realme/samurai" name="tufeigunchu/android_device_realme_samurai" remote="device" />
+
+    <!--Kernel-->
+    <project path="kernel/realme/sm8150" name="tufeigunchu/android_kernel_realme_sm8150" remote="kernel" />
+
+    <!-- Vendor folders -->
+    <project path="vendor/realme/samurai" name="tufeigunchu/proprietary_vendor_realme_samurai" remote="vendor" />
+
+    <!-- app folders -->
+    <project path="packages/apps/RealmeParts" name="tufeigunchu/android_packages_apps_RealmeParts" remote="realme" />
+
+</manifest>
