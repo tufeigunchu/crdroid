@@ -1,0 +1,487 @@
+
+project bionic/
+diff --git a/libc/Android.bp b/libc/Android.bp
+index 6c254b9..0c286f7 100644
+--- a/libc/Android.bp
++++ b/libc/Android.bp
+@@ -119,34 +119,7 @@ cc_defaults {
+     // warning since this is intended right now.
+     ldflags: ["-Wl,-z,muldefs"],
+ 
+-    multilib: {
+-        lib64: {
+-            product_variables: {
+-                malloc_zero_contents: {
+-                    cflags: ["-DSCUDO_ZERO_CONTENTS"],
+-                },
+-                malloc_pattern_fill_contents: {
+-                    cflags: ["-DSCUDO_PATTERN_FILL_CONTENTS"],
+-                },
+-                malloc_not_svelte: {
+-                    cflags: ["-DUSE_SCUDO"],
+-                },
+-            },
+-        },
+-        lib32: {
+-            product_variables: {
+-                malloc_zero_contents: {
+-                    cflags: ["-DSCUDO_ZERO_CONTENTS"],
+-                },
+-                malloc_pattern_fill_contents: {
+-                    cflags: ["-DSCUDO_PATTERN_FILL_CONTENTS"],
+-                },
+-                malloc_not_svelte_libc32: {
+-                    cflags: ["-DUSE_SCUDO"],
+-                },
+-            },
+-        },
+-    },
++    
+ 
+     lto: {
+         never: true,
+@@ -190,14 +163,7 @@ cc_defaults {
+         "libc_jemalloc_wrapper",
+     ],
+     header_libs: ["gwp_asan_headers"],
+-    multilib: {
+-        lib64: {
+-            product_variables: libc_scudo_product_variables,
+-        },
+-        lib32: {
+-            product_variables: libc32_scudo_product_variables,
+-        }
+-    },
++    
+ }
+ 
+ // Functions not implemented by jemalloc directly, or that need to
+
+project build/make/
+diff --git a/core/product_config.mk b/core/product_config.mk
+index 5d76eeb..89191b7 100644
+--- a/core/product_config.mk
++++ b/core/product_config.mk
+@@ -306,7 +306,7 @@ ifneq (,$(extra_locales))
+     # Don't spam stdout, because envsetup.sh may be scraping values from it.
+     $(info Adding CUSTOM_LOCALES [$(extra_locales)] to PRODUCT_LOCALES [$(PRODUCT_LOCALES)])
+   endif
+-  PRODUCT_LOCALES += $(extra_locales)
++  #PRODUCT_LOCALES += $(extra_locales)
+   extra_locales :=
+ endif
+ 
+diff --git a/target/product/full_base.mk b/target/product/full_base.mk
+index 0b8d9c5..3d0d427 100644
+--- a/target/product/full_base.mk
++++ b/target/product/full_base.mk
+@@ -42,7 +42,7 @@ PRODUCT_VENDOR_PROPERTIES := \
+     ro.config.notification_sound?=pixiedust.ogg
+ 
+ # Put en_US first in the list, so make it default.
+-PRODUCT_LOCALES := en_US
++PRODUCT_LOCALES := zh_CN
+ 
+ # Get some sounds
+ ifeq ($(LINEAGE_BUILD),)
+diff --git a/target/product/languages_default.mk b/target/product/languages_default.mk
+index a13a23c..faecc63 100644
+--- a/target/product/languages_default.mk
++++ b/target/product/languages_default.mk
+@@ -17,89 +17,4 @@
+ # This is a build configuration that just contains a list of languages, with
+ # en_US set as the default language.
+ PRODUCT_LOCALES := \
+-        en_US \
+-        af_ZA \
+-        am_ET \
+-        ar_EG \
+-        ar_XB \
+-        as_IN \
+-        az_AZ \
+-        be_BY \
+-        bg_BG \
+-        bn_BD \
+-        bs_BA \
+-        ca_ES \
+-        cs_CZ \
+-        da_DK \
+-        de_DE \
+-        el_GR \
+-        en_AU \
+-        en_CA \
+-        en_GB \
+-        en_IN \
+-        en_XA \
+-        es_ES \
+-        es_US \
+-        et_EE \
+-        eu_ES \
+-        fa_IR \
+-        fi_FI \
+-        fr_CA \
+-        fr_FR \
+-        gl_ES \
+-        gu_IN \
+-        hi_IN \
+-        hr_HR \
+-        hu_HU \
+-        hy_AM \
+-        in_ID \
+-        is_IS \
+-        it_IT \
+-        iw_IL \
+-        ja_JP \
+-        ka_GE \
+-        kk_KZ \
+-        km_KH \
+-        kn_IN \
+-        ko_KR \
+-        ky_KG \
+-        lo_LA \
+-        lt_LT \
+-        lv_LV \
+-        mk_MK \
+-        ml_IN \
+-        mn_MN \
+-        mr_IN \
+-        ms_MY \
+-        my_MM \
+-        nb_NO \
+-        ne_NP \
+-        nl_NL \
+-        or_IN \
+-        pa_IN \
+-        pl_PL \
+-        pt_BR \
+-        pt_PT \
+-        ro_RO \
+-        ru_RU \
+-        si_LK \
+-        sk_SK \
+-        sl_SI \
+-        sq_AL \
+-        sr_Latn_RS \
+-        sr_RS \
+-        sv_SE \
+-        sw_TZ \
+-        ta_IN \
+-        te_IN \
+-        th_TH \
+-        tl_PH \
+-        tr_TR \
+-        uk_UA \
+-        ur_PK \
+-        uz_UZ \
+-        vi_VN \
+         zh_CN \
+-        zh_HK \
+-        zh_TW \
+-        zu_ZA \
+
+project device/realme/samurai/
+diff --git a/rootdir/bin/init.qcom.post_boot.sh b/rootdir/bin/init.qcom.post_boot.sh
+index 93514b9..9233a70 100755
+--- a/rootdir/bin/init.qcom.post_boot.sh
++++ b/rootdir/bin/init.qcom.post_boot.sh
+@@ -463,7 +463,7 @@ low_ram=`getprop ro.config.low_ram`
+ 
+ if [ "$ProductName" == "msmnile" ] || [ "$ProductName" == "kona" ] ; then
+       # Enable ZRAM
+-      configure_zram_parameters
++      #configure_zram_parameters
+       configure_read_ahead_kb_values
+       echo 0 > /proc/sys/vm/page-cluster
+       echo 100 > /proc/sys/vm/swappiness
+@@ -571,11 +571,11 @@ else
+     # wsf Range : 1..1000 So set to bare minimum value 1.
+     echo 1 > /proc/sys/vm/watermark_scale_factor
+ 
+-    configure_zram_parameters
++    #configure_zram_parameters
+ 
+     configure_read_ahead_kb_values
+ 
+-    enable_swap
++    #enable_swap
+ fi
+ }
+ 
+diff --git a/rootdir/etc/fstab.qcom b/rootdir/etc/fstab.qcom
+index ed247a5..5ddedf0 100644
+--- a/rootdir/etc/fstab.qcom
++++ b/rootdir/etc/fstab.qcom
+@@ -13,8 +13,9 @@
+ /dev/block/by-name/vendor                               /vendor                ext4    ro,barrier=1,discard                                 wait,avb,first_stage_mount
+ /dev/block/bootdevice/by-name/cache                     /cache                 ext4    nosuid,noatime,nodev,barrier=1                       wait
+ /dev/block/by-name/metadata                             /metadata              ext4    noatime,nosuid,nodev                                 wait,formattable,check,first_stage_mount
+-/dev/block/bootdevice/by-name/userdata                  /data                  ext4    noatime,nosuid,nodev,barrier=1,noauto_da_alloc,errors=panic,inlinecrypt  latemount,wait,check,fileencryption=aes-256-xts:aes-256-cts:v2,reservedsize=128M
+-/dev/block/bootdevice/by-name/userdata                  /data                  f2fs    noatime,nosuid,nodev,discard,fsync_mode=nobarrier,inlinecrypt latemount,wait,check,fileencryption=aes-256-xts:aes-256-cts:v2,formattable,reservedsize=128M,sysfs_path=/sys/devices/platform/soc/1d84000.ufshc,checkpoint=fs
++#/dev/block/bootdevice/by-name/userdata                  /data                  ext4    noatime,nosuid,nodev,barrier=1,noauto_da_alloc,errors=panic,inlinecrypt  latemount,wait,check,fileencryption=aes-256-xts:aes-256-cts:v2,reservedsize=128M
++#/dev/block/bootdevice/by-name/userdata                  /data                  f2fs    noatime,nosuid,nodev,discard,fsync_mode=nobarrier,inlinecrypt latemount,wait,check,fileencryption=aes-256-xts:aes-256-cts:v2,formattable,reservedsize=128M,sysfs_path=/sys/devices/platform/soc/1d84000.ufshc,checkpoint=fs
++/dev/block/bootdevice/by-name/userdata                  /data                  f2fs    noatime,nosuid,nodev,discard,fsync_mode=nobarrier latemount,wait,check,formattable,reservedsize=128M,sysfs_path=/sys/devices/platform/soc/1d84000.ufshc,checkpoint=fs
+ /dev/block/bootdevice/by-name/modem                     /vendor/firmware_mnt   vfat    ro,shortname=lower,uid=0,gid=1000,dmask=227,fmask=337,context=u:object_r:firmware_file:s0 wait
+ /dev/block/bootdevice/by-name/dsp                       /vendor/dsp            ext4    ro,nosuid,nodev,barrier=1                            wait
+ /dev/block/bootdevice/by-name/persist                   /mnt/vendor/persist    ext4    nosuid,noatime,nodev,barrier=1                       wait,check
+diff --git a/sepolicy/vendor/priv_app.te b/sepolicy/vendor/priv_app.te
+index 86d108e..ec6f1ae 100644
+--- a/sepolicy/vendor/priv_app.te
++++ b/sepolicy/vendor/priv_app.te
+@@ -1 +1,2 @@
+ allow priv_app firmware_file:filesystem getattr;
++allow priv_app privapp_data_file:fifo_file { read write open };
+
+project device/xiaomi/sm6375-common/
+diff --git a/rootdir/bin/init.kernel.post_boot-blair.sh b/rootdir/bin/init.kernel.post_boot-blair.sh
+index 09d1f16..e59fb56 100755
+--- a/rootdir/bin/init.kernel.post_boot-blair.sh
++++ b/rootdir/bin/init.kernel.post_boot-blair.sh
+@@ -104,7 +104,7 @@ function configure_memory_parameters() {
+ 	# Disable wsf for all targets beacause we are using efk.
+ 	# wsf Range : 1..1000 So set to bare minimum value 1.
+ 	echo 1 > /proc/sys/vm/watermark_scale_factor
+-	configure_zram_parameters
++	#configure_zram_parameters
+ 	configure_read_ahead_kb_values
+         
+         #M17-T code for HQ-264248 by liuhelong at 2022/12/8 start
+@@ -249,4 +249,4 @@ setprop vendor.post_boot.parsed 1
+ 
+ # M17P_T code for HQ-290074 by zhouxinyi at 2023-03-27 start
+ echo 0 > /proc/sys/vm/panic_on_oom
+-# M17P_T code for HQ-290074 by zhouxinyi at 2023-03-27 end
+\ No newline at end of file
++# M17P_T code for HQ-290074 by zhouxinyi at 2023-03-27 end
+diff --git a/rootdir/bin/init.kernel.post_boot-holi.sh b/rootdir/bin/init.kernel.post_boot-holi.sh
+index b777048..a3aa79e 100755
+--- a/rootdir/bin/init.kernel.post_boot-holi.sh
++++ b/rootdir/bin/init.kernel.post_boot-holi.sh
+@@ -104,7 +104,7 @@ function configure_memory_parameters() {
+ 	# Disable wsf for all targets beacause we are using efk.
+ 	# wsf Range : 1..1000 So set to bare minimum value 1.
+ 	echo 1 > /proc/sys/vm/watermark_scale_factor
+-	configure_zram_parameters
++	#configure_zram_parameters
+ 	configure_read_ahead_kb_values
+         
+         #M17-T code for HQ-264248 by liuhelong at 2022/12/8 start
+@@ -247,4 +247,4 @@ setprop vendor.post_boot.parsed 1
+ 
+ # M17P_T code for HQ-290074 by zhouxinyi at 2023-03-27 start
+ echo 0 > /proc/sys/vm/panic_on_oom
+-# M17P_T code for HQ-290074 by zhouxinyi at 2023-03-27 end
+\ No newline at end of file
++# M17P_T code for HQ-290074 by zhouxinyi at 2023-03-27 end
+diff --git a/rootdir/bin/init.qcom.post_boot.sh b/rootdir/bin/init.qcom.post_boot.sh
+index aeaa3c9..888c722 100755
+--- a/rootdir/bin/init.qcom.post_boot.sh
++++ b/rootdir/bin/init.qcom.post_boot.sh
+@@ -946,7 +946,7 @@ low_ram=`getprop ro.config.low_ram`
+ 
+ if [ "$ProductName" == "msmnile" ] || [ "$ProductName" == "kona" ] || [ "$ProductName" == "sdmshrike_au" ]; then
+       # Enable ZRAM
+-      configure_zram_parameters
++      #configure_zram_parameters
+       configure_read_ahead_kb_values
+       echo 0 > /proc/sys/vm/page-cluster
+       echo 100 > /proc/sys/vm/swappiness
+@@ -1060,11 +1060,11 @@ else
+     # wsf Range : 1..1000 So set to bare minimum value 1.
+     echo 1 > /proc/sys/vm/watermark_scale_factor
+ 
+-    configure_zram_parameters
++    #configure_zram_parameters
+ 
+     configure_read_ahead_kb_values
+ 
+-    enable_swap
++    #enable_swap
+ fi
+ }
+ 
+diff --git a/rootdir/etc/fstab.default b/rootdir/etc/fstab.default
+index e20c8c5..ee18ad3 100644
+--- a/rootdir/etc/fstab.default
++++ b/rootdir/etc/fstab.default
+@@ -47,7 +47,8 @@ odm                                                     /odm                   e
+ odm                                                     /odm                   erofs   ro                                                   wait,slotselect,avb,logical,first_stage_mount
+ /dev/block/by-name/metadata                             /metadata              ext4    noatime,nosuid,nodev,discard                         wait,check,formattable,first_stage_mount
+ /dev/block/bootdevice/by-name/persist                   /mnt/vendor/persist    ext4    noatime,nosuid,nodev,barrier=1                       wait,check
+-/dev/block/bootdevice/by-name/userdata                  /data                  f2fs    noatime,nosuid,nodev,discard,inlinecrypt,reserve_root=32768,resgid=1065,fsync_mode=nobarrier    latemount,wait,check,formattable,fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized+wrappedkey_v0,keydirectory=/metadata/vold/metadata_encryption,metadata_encryption=aes-256-xts:wrappedkey_v0,quota,reservedsize=128M,checkpoint=fs
++#/dev/block/bootdevice/by-name/userdata                  /data                  f2fs    noatime,nosuid,nodev,discard,inlinecrypt,reserve_root=32768,resgid=1065,fsync_mode=nobarrier    latemount,wait,check,formattable,fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized+wrappedkey_v0,keydirectory=/metadata/vold/metadata_encryption,metadata_encryption=aes-256-xts:wrappedkey_v0,quota,reservedsize=128M,checkpoint=fs
++/dev/block/bootdevice/by-name/userdata                  /data                  f2fs    noatime,nosuid,nodev,discard,reserve_root=32768,resgid=1065,fsync_mode=nobarrier    latemount,wait,check,formattable,quota,reservedsize=128M,checkpoint=fs
+ /dev/block/bootdevice/by-name/misc                      /misc                  emmc    defaults                                             defaults
+ /devices/platform/soc/4784000.sdhci/mmc_host*           /storage/sdcard1       vfat    nosuid,nodev                                         wait,voldmanaged=sdcard1:auto,encryptable=footer
+ /devices/platform/soc/*.ssusb/*.dwc3/xhci-hcd.*.auto*   /storage/usbotg        vfat    nosuid,nodev                                         wait,voldmanaged=usbotg:auto
+diff --git a/rootdir/etc/fstab.emmc b/rootdir/etc/fstab.emmc
+index 536dcdc..09bf148 100644
+--- a/rootdir/etc/fstab.emmc
++++ b/rootdir/etc/fstab.emmc
+@@ -42,7 +42,8 @@ vendor                                                  /vendor                e
+ odm                                                     /odm                   ext4    ro,barrier=1,discard                                 wait,slotselect,avb,logical,first_stage_mount
+ /dev/block/by-name/metadata                             /metadata              ext4    noatime,nosuid,nodev,discard,data=journal,commit=1   wait,check,formattable,first_stage_mount
+ /dev/block/bootdevice/by-name/persist                   /mnt/vendor/persist    ext4    noatime,nosuid,nodev,barrier=1                       wait,check
+-/dev/block/bootdevice/by-name/userdata                  /data                  f2fs    noatime,nosuid,nodev,discard,reserve_root=32768,resgid=1065,fsync_mode=nobarrier,inlinecrypt    latemount,wait,check,formattable,fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized,keydirectory=/metadata/vold/metadata_encryption,quota,reservedsize=128M,checkpoint=fs
++#/dev/block/bootdevice/by-name/userdata                  /data                  f2fs    noatime,nosuid,nodev,discard,reserve_root=32768,resgid=1065,fsync_mode=nobarrier,inlinecrypt    latemount,wait,check,formattable,fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized,keydirectory=/metadata/vold/metadata_encryption,quota,reservedsize=128M,checkpoint=fs
++/dev/block/bootdevice/by-name/userdata                  /data                  f2fs    noatime,nosuid,nodev,discard,reserve_root=32768,resgid=1065,fsync_mode=nobarrier,   latemount,wait,check,formattable,quota,reservedsize=128M,checkpoint=fs
+ /dev/block/bootdevice/by-name/misc                      /misc                  emmc    defaults                                             defaults
+ /devices/platform/soc/4784000.sdhci/mmc_host*           /storage/sdcard1       vfat    nosuid,nodev                                         wait,voldmanaged=sdcard1:auto,encryptable=footer
+ /devices/platform/soc/*.ssusb/*.dwc3/xhci-hcd.*.auto*   /storage/usbotg        vfat    nosuid,nodev                                         wait,voldmanaged=usbotg:auto
+diff --git a/sepolicy/vendor/system_app.te b/sepolicy/vendor/system_app.te
+index b21b347..2e5438d 100644
+--- a/sepolicy/vendor/system_app.te
++++ b/sepolicy/vendor/system_app.te
+@@ -1 +1,2 @@
+ allow system_app proc_pagetypeinfo:file r_file_perms;
++allow priv_app privapp_data_file:fifo_file { read write open };
+
+project device/xiaomi/stone/
+diff --git a/crdroid.dependencies b/crdroid.dependencies
+index 50bb7e0..74c9a0b 100644
+--- a/crdroid.dependencies
++++ b/crdroid.dependencies
+@@ -8,10 +8,6 @@
+     "target_path": "hardware/xiaomi",
+     "branch": "lineage-21"
+   },
+-  {
+-    "repository": "crdroidandroid/proprietary_vendor_xiaomi-stone",
+-    "target_path": "vendor/xiaomi"
+-  },
+   {
+     "repository": "crdroidandroid/android_kernel_xiaomi_stone",
+     "target_path": "device/xiaomi/stone-kernel"
+diff --git a/device.mk b/device.mk
+index 8585094..4553271 100644
+--- a/device.mk
++++ b/device.mk
+@@ -66,3 +66,5 @@ PRODUCT_SOONG_NAMESPACES += \
+ 
+ # Inherit from vendor blobs
+ $(call inherit-product, vendor/xiaomi/stone/stone-vendor.mk)
++
++PRODUCT_PACKAGES += su htop
+
+project external/chromium-webview/prebuilt/arm64/
+diff --git a/.gitattributes b/.gitattributes
+deleted file mode 100644
+index f1c588b..0000000
+--- a/.gitattributes
++++ /dev/null
+@@ -1 +0,0 @@
+-*.apk filter=lfs diff=lfs merge=lfs -text
+diff --git a/.lfsconfig b/.lfsconfig
+deleted file mode 100644
+index e62538f..0000000
+--- a/.lfsconfig
++++ /dev/null
+@@ -1,3 +0,0 @@
+-[lfs]
+-    url = "https://review.lineageos.org/LineageOS/android_external_chromium-webview_prebuilt_arm64.git/info/lfs"
+-    pushurl = "ssh://review.lineageos.org/LineageOS/android_external_chromium-webview_prebuilt_arm64.git"
+diff --git a/webview.apk b/webview.apk
+deleted file mode 100644
+index a71da15..0000000
+--- a/webview.apk
++++ /dev/null
+@@ -1,3 +0,0 @@
+-version https://git-lfs.github.com/spec/v1
+-oid sha256:38a1af5a1f9ac2c483345b922bd7c2ce1b200162f6d2041a110b88f01ff2a5fa
+-size 209992342
+
+project frameworks/base/
+diff --git a/data/sounds/notifications/ogg/Xenon.ogg b/data/sounds/notifications/ogg/Xenon.ogg
+index 255a1a96..d358bc32 100644
+Binary files a/data/sounds/notifications/ogg/Xenon.ogg and b/data/sounds/notifications/ogg/Xenon.ogg differ
+diff --git a/data/sounds/notifications/ogg/Zirconium.ogg b/data/sounds/notifications/ogg/Zirconium.ogg
+index d84b59e4..c0cf9761 100644
+Binary files a/data/sounds/notifications/ogg/Zirconium.ogg and b/data/sounds/notifications/ogg/Zirconium.ogg differ
+diff --git a/data/sounds/ringtones/ogg/Zeta.ogg b/data/sounds/ringtones/ogg/Zeta.ogg
+index ef64d2fe..865ebeba 100644
+Binary files a/data/sounds/ringtones/ogg/Zeta.ogg and b/data/sounds/ringtones/ogg/Zeta.ogg differ
+
+project hardware/xiaomi/
+diff --git a/.clang-format b/.clang-format
+deleted file mode 120000
+index ddcf5a2..0000000
+--- a/.clang-format
++++ /dev/null
+@@ -1 +0,0 @@
+-../../build/soong/scripts/system-clang-format
+\ No newline at end of file
+diff --git a/.clang-format b/.clang-format
+new file mode 100755
+index 0000000..ddcf5a2
+--- /dev/null
++++ b/.clang-format
+@@ -0,0 +1 @@
++../../build/soong/scripts/system-clang-format
+\ No newline at end of file
+
+project kernel/realme/sm8150/
+diff --git a/Android.bp b/Android.bp
+index c3c438695..71fe6603d 100644
+--- a/Android.bp
++++ b/Android.bp
+@@ -28,7 +28,7 @@ kernel_headers_verbose = ""
+ build = ["gen_headers_arm.bp", "gen_headers_arm64.bp"]
+ 
+ cc_library_headers {
+-    name: "qti_kernel_headers",
++    name: "x2_qti_kernel_headers",
+     arch: {
+         arm: {
+             generated_headers: ["qti_generate_kernel_headers_arm"],
+
+project system/core/
+diff --git a/debuggerd/Android.bp b/debuggerd/Android.bp
+index d20de6b..1ed6324 100644
+--- a/debuggerd/Android.bp
++++ b/debuggerd/Android.bp
+@@ -257,12 +257,7 @@ cc_library_static {
+             cflags: ["-DROOT_POSSIBLE"],
+         },
+ 
+-        malloc_not_svelte: {
+-            cflags: ["-DUSE_SCUDO"],
+-            whole_static_libs: ["libscudo"],
+-            srcs: ["libdebuggerd/scudo.cpp"],
+-            header_libs: ["scudo_headers"],
+-        },
++        
+     },
+ }
+ 
+
+project vendor/lineage/
+diff --git a/config/crdroid.mk b/config/crdroid.mk
+index 5e42ad9..de1fb2d 100644
+--- a/config/crdroid.mk
++++ b/config/crdroid.mk
+@@ -63,9 +63,9 @@ PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION := frameworks/base/config/boot-im
+ 
+ # Extra packages
+ PRODUCT_PACKAGES += \
+-    GameSpace \
+-    MatLog \
+-    OmniJaws
++    su \
++    htop \
++    OmniJaws 
+ 
+ ifeq ($(TARGET_SUPPORTS_64_BIT_APPS),true)
+ PRODUCT_PACKAGES += \
+diff --git a/config/telephony.mk b/config/telephony.mk
+index be414ed..26f23ec 100644
+--- a/config/telephony.mk
++++ b/config/telephony.mk
+@@ -14,7 +14,8 @@ PRODUCT_PACKAGES += \
+ # Telephony packages
+ PRODUCT_PACKAGES += \
+     messaging \
+-    Stk
++    Stk \
++    QKSMS
+ 
+ # Default ringtone
+ PRODUCT_PRODUCT_PROPERTIES += \
