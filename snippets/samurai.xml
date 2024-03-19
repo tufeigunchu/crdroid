@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <project path="packages/apps/RealmeParts" name="HyperTeam/android_packages_apps_RealmeParts" remote="github" revision="lineage-21" />
+  <project path="device/realme/samurai" name="HyperTeam/android_device_realme_samurai" remote="github" revision="lineage-21" />
+  <project path="kernel/realme/sm8150" name="HyperTeam/android_kernel_realme_sm8150" remote="github" revision="lineage-21" clone-depth="1" />
+  <project path="vendor/realme/samurai" name="HyperTeam/proprietary_vendor_realme_samurai" remote="github" revision="lineage-21" />
+</manifest>
